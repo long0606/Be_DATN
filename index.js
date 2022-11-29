@@ -88,7 +88,7 @@ app.get("/allData", async function(req, res){
     res.json(data)
 });
 
-app.listen(5000);
+app.listen(process.env.PORT || 3000);
 
 
 
