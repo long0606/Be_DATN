@@ -91,7 +91,7 @@ app.get("/RainDay", async function(req, res){
         res.json(data)
     });
 
-app.listen(process.env.PORT || 8080);
+app.listen(process.env.PORT || 3000);
 
 
 
@@ -109,7 +109,7 @@ async function within(fn, res, duration) {
 }
 
 async function getUsers() {
-    return (await Post.find({Month: '11' } ).sort({id:-1}))
+    return (await Post.find({Day: '11' }).sort({id:-1}))
 }
 
 async function getMax(findMonth, findDay) {
