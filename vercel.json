@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "buildCommand": "next build",
     "builds": [
       {
         "src": "./index.js",
@@ -11,6 +12,5 @@
         "src": "/(.*)",
         "dest": "/index.js"
       }
-    ],
-      "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }]
+    ]
   }
