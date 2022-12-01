@@ -81,8 +81,9 @@ const Post = mongoose.model('Post', Postman);
 //         ).sort({id:-1});
 //     res.json(data)
 // });
-app.get("/allData", module.exports = async (req, res) => {
-    await within(getUsers, res, 7000)
+app.get("/allData", async function(req, res){
+    var data = await Post.find().sort({id:-1});
+    res.json(data)
 });
 app.get("/RainDay", async function(req, res){
         var data = await Post.find(
@@ -93,28 +94,6 @@ app.get("/RainDay", async function(req, res){
 
 app.listen(process.env.PORT || 3000);
 
-
-
-async function within(fn, res, duration) {
-    const id = setTimeout(() => res.json({
-        message: "There was an error with the upstream service!"
-    }, duration))
-    try {
-        let data = await fn()
-        clearTimeout(id)
-        res.json(data)
-    } catch(e) {
-      res.status(500).json({message: e.message})
-    }
-}
-
-async function getUsers() {
-    return (await Post.find({Day: '11' }).sort({id:-1}))
-}
-
-async function getMax(findMonth, findDay) {
-    return (await Post.find({Day:findDay,Month: findMonth} ).sort({RainDay:-1}))
-}
 // schedule.scheduleJob(' */1 * * * *',function(){
 // })
 
