@@ -88,7 +88,7 @@ app.get("/allData", async function(req, res){
 app.get("/RainDay", async function(req, res){
         var data = await Post.find(
             {Month: '11' }
-            ).sort({id:-1});
+            ).sort({RainDay:-1});
         res.json(data)
     });
 
