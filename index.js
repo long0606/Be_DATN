@@ -86,12 +86,12 @@ app.get("/allData", module.exports = async (req, res) => {
 });
 app.get("/RainDay", async function(req, res){
         var data = await Post.find(
-            {Month: 11 }
+            {Month: '11' }
             ).sort({id:-1});
         res.json(data)
     });
 
-app.listen(process.env.PORT || 3000);
+app.listen(process.env.PORT || 8080);
 
 
 
@@ -109,7 +109,7 @@ async function within(fn, res, duration) {
 }
 
 async function getUsers() {
-    return (await Post.find( ).sort({id:-1}))
+    return (await Post.find({Month: '11' } ).sort({id:-1}))
 }
 
 async function getMax(findMonth, findDay) {
