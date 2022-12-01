@@ -75,32 +75,68 @@ const Post = mongoose.model('Post', Postman);
 // var data = Post.find({Day: "27", Hour: { $in: [ "15", "16","17"]} },function(err,result){
 //     console.log(result[1]["RainDay"]);
 //     }).sort({id:-1});
-app.get("/RainDay/find", async function(req, res){
-    var data = await Post.find(
-        {Day: "27", Hour: { $in: [ "15", "16","17"]} }
-        ).sort({id:-1});
-    res.json(data)
+// app.get("/RainDay/find", async function(req, res){
+//     var data = await Post.find(
+//         {Day: "27", Hour: { $in: [ "15", "16","17"]} }
+//         ).sort({id:-1});
+//     res.json(data)
+// });
+app.get("/allData", module.exports = async (req, res) => {
+    await within(getUsers, res, 7000)
 });
-app.get("/allData", async function(req, res){
-    var data = await Post.find(
-        // {Day: "27", Hour: { $in: [ "15", "16","17"]} }
-        ).sort({id:-1});
-    res.json(data)
-});
+app.get("/RainDay", async function(req, res){
+        var data = await Post.find(
+            {Month: 11 }
+            ).sort({id:-1});
+        res.json(data)
+    });
 
 app.listen(process.env.PORT || 3000);
 
 
 
+async function within(fn, res, duration) {
+    const id = setTimeout(() => res.json({
+        message: "There was an error with the upstream service!"
+    }, duration))
+    try {
+        let data = await fn()
+        clearTimeout(id)
+        res.json(data)
+    } catch(e) {
+      res.status(500).json({message: e.message})
+    }
+}
 
+async function getUsers() {
+    return (await Post.find( ).sort({id:-1}))
+}
+
+async function getMax(findMonth, findDay) {
+    return (await Post.find({Day:findDay,Month: findMonth} ).sort({RainDay:-1}))
+}
 // schedule.scheduleJob(' */1 * * * *',function(){
 // })
 
 var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE4MjU4OTc5MTYsImlkIjoiNjE4MGVmZGJjOTVhMDAwMDNmMDAzNzE2IiwibmFtZSI6ImFkbWluIiwib3JpZ19pYXQiOjE2NjgyMTc5MTYsInVzZXJuYW1lIjoiYWRtaW4ifQ.qcohKNm2QpvEN0c2wUMmb5wA_1ChLPYje8PaKai6J0A';
     const https = require('https');
+    // var request =  https.get('https://be-datn.vercel.app/allData', function (res){
+    //             var data = ''; 
+    //             res.on('data', function (chunk) {
+    //                 data += chunk;
+                   
+    //             });
+    //             res.on('end', function () {
+    //                 let jsonData = JSON.parse(data);
+    //                 console.log(data)
+    //             }
+    //             )
+    //         }
+            
+    //         )
     var options = {
         host: 'quantrac.xathongminh.vn',
-        path: '/api/admin/water-monitorings?page=1&length=150',
+        path: '/api/admin/water-monitorings?page=1&length=10',
         // length max = 150, min auto = 4
         headers: {
             Authorization: 'Bearer '+token,
