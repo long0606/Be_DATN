@@ -86,8 +86,8 @@ app.get("/allData", async function(req, res){
     var data = await Post.find().sort({id:-1});
     res.json(data)
 });
-app.get("/RainDay", async function(req, res){
-        var data = await Post.aggregate({ $group : { _id: null, max: { $max : "$age" }}}).limit(1);
+app.get("/Max", async function(req, res){
+        var data = await Post.aggregate([{ $group : {_id:{"hour": "$Hour", "day": "$Day" ,"month": "$Month"}, RainEachHour: { $max : "$RainHour" },}},{"$sort": {"_id.month":-1,"_id.day":-1,"_id.hour":-1}}]);
         res.json(data)
     });
 
@@ -98,6 +98,7 @@ app.listen(3000);
 
 var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE4MjU4OTc5MTYsImlkIjoiNjE4MGVmZGJjOTVhMDAwMDNmMDAzNzE2IiwibmFtZSI6ImFkbWluIiwib3JpZ19pYXQiOjE2NjgyMTc5MTYsInVzZXJuYW1lIjoiYWRtaW4ifQ.qcohKNm2QpvEN0c2wUMmb5wA_1ChLPYje8PaKai6J0A';
     const https = require('https');
+const { parse } = require('querystring');
     // var request =  https.get('https://be-datn.vercel.app/allData', function (res){
     //             var data = ''; 
     //             res.on('data', function (chunk) {
@@ -114,7 +115,7 @@ var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE4MjU4OTc5MTYsImlkIj
     //         )
     var options = {
         host: 'quantrac.xathongminh.vn',
-        path: '/api/admin/water-monitorings?page=1&length=10',
+        path: '/api/admin/water-monitorings?page=1&length=150',
         // length max = 150, min auto = 4
         headers: {
             Authorization: 'Bearer '+token,
@@ -135,12 +136,16 @@ var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE4MjU4OTc5MTYsImlkIj
                     var splitCreated_at = jsonData["data"]["entries"][i]["created_at"].split('T');
                     var rxInfo = jsonData["data"]["entries"][i]["rxInfo"];
                     var rssi =  rxInfo==null?'':rxInfo[0]["rssi"];
+                    var intYear = parseInt(splitCreated_at[0].split('-')[0]);
+                    var intMonth = parseInt(splitCreated_at[0].split('-')[1]);
+                    var intHour = parseInt(splitObjectJSON[1]?.split(':')[1]);
+                    var intDay = parseInt(splitCreated_at[0].split('-')[2]);
                     var year = splitCreated_at[0].split('-')[0];
-                    var month = splitCreated_at[0].split('-')[1];
-                    var day = splitCreated_at[0].split('-')[2];
+                    var month = intYear==2022&&intMonth==11&&intHour==0||intHour==1||intHour==2||intHour==3||intHour==4||intHour==5||intHour==6?intDay==30?(intMonth+1).toString():intMonth.toString():intMonth.toString();
+                    var day = intYear==2022&&intMonth==11&&intHour==0||intHour==1||intHour==2||intHour==3||intHour==4||intHour==5||intHour==6?intDay<30?(intDay +1).toString():1:intDay.toString();
                     var hour = splitObjectJSON[1]?.split(':')[1];
                     var min = splitObjectJSON[2]?.split(':')[1];
-                    var rainDay = splitObjectJSON[3]?.split(':')[1];
+                    var rainDay =splitObjectJSON[3]?.split(':')[1];
                     var rainHour = splitObjectJSON[4]?.split(':')[1];
                     var battery = splitObjectJSON[0]?.split(':')[1];
                     const post = new Post({
@@ -189,6 +194,8 @@ var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE4MjU4OTc5MTYsImlkIj
                });
                    
             }
+            
+           
             // console.log(jsonData["data"]["pagination"]["total"]);
             // console.log(jsonData["data"]["entries"].length);
         });
