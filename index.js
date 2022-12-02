@@ -4,7 +4,7 @@ const schedule = require('node-schedule');
 const mongoose = require('mongoose');
 const FCM = require('fcm').FCM;
 const express = require('express');    
-
+const cors = require('cors')
 const app = express();
 
 // setup for firebase cloud messagge
@@ -81,18 +81,17 @@ const Post = mongoose.model('Post', Postman);
 //         ).sort({id:-1});
 //     res.json(data)
 // });
+app.use(cors());
 app.get("/allData", async function(req, res){
     var data = await Post.find().sort({id:-1});
     res.json(data)
 });
 app.get("/RainDay", async function(req, res){
-        var data = await Post.find(
-            {Month: '11' }
-            ).sort({RainDay:-1});
+        var data = await Post.aggregate({ $group : { _id: null, max: { $max : "$age" }}}).limit(1);
         res.json(data)
     });
 
-app.listen(process.env.PORT || 3000);
+app.listen(3000);
 
 // schedule.scheduleJob(' */1 * * * *',function(){
 // })
