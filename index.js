@@ -9,7 +9,7 @@ const app = express();
 
 // setup for firebase cloud messagge
 var serverKey = 'AAAAl7gMyoE:APA91bHzzmOAPh3ljX8BoDShqwP704ngrjxPZIESRHCcO5ugWn5idvwjjpPSS4xTLVNY0Vha5yw7mfq37Pp7ucJPd5ebZc99AopX8WfD5t7n3JMttXQVb-ixsDahkqG7S41OWhzv3jX6';
-var fcm = new FCM(serverKey);
+var fcm = new FCM(serverKey,);
 
 
 
@@ -75,13 +75,17 @@ const Post = mongoose.model('Post', Postman);
 // var data = Post.find({Day: "27", Hour: { $in: [ "15", "16","17"]} },function(err,result){
 //     console.log(result[1]["RainDay"]);
 //     }).sort({id:-1});
-// app.get("/RainDay/find", async function(req, res){
+// app.get("/find", async function(req, res){
 //     var data = await Post.find(
-//         {Day: "27", Hour: { $in: [ "15", "16","17"]} }
-//         ).sort({id:-1});
+//         {Day: date, Hour: { $in: [ (hours-1).toString(), (hours-2).toString(),(hours-3).toString()]} }
+//         ).sort({Hour:1, Min:1});
 //     res.json(data)
 // });
 app.use(cors());
+app.get("/find", async function(req, res){
+    var data = await Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()},{ Hour: (hours-2).toString()},{ Hour: (hours-3).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}]);
+    res.json(data)
+});
 app.get("/allData", async function(req, res){
     var data = await Post.find().sort({id:-1});
     res.json(data)
@@ -99,20 +103,6 @@ app.listen(3000);
 var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE4MjU4OTc5MTYsImlkIjoiNjE4MGVmZGJjOTVhMDAwMDNmMDAzNzE2IiwibmFtZSI6ImFkbWluIiwib3JpZ19pYXQiOjE2NjgyMTc5MTYsInVzZXJuYW1lIjoiYWRtaW4ifQ.qcohKNm2QpvEN0c2wUMmb5wA_1ChLPYje8PaKai6J0A';
     const https = require('https');
 const { parse } = require('querystring');
-    // var request =  https.get('https://be-datn.vercel.app/allData', function (res){
-    //             var data = ''; 
-    //             res.on('data', function (chunk) {
-    //                 data += chunk;
-                   
-    //             });
-    //             res.on('end', function () {
-    //                 let jsonData = JSON.parse(data);
-    //                 console.log(data)
-    //             }
-    //             )
-    //         }
-            
-    //         )
     var options = {
         host: 'quantrac.xathongminh.vn',
         path: '/api/admin/water-monitorings?page=1&length=150',
@@ -125,7 +115,6 @@ const { parse } = require('querystring');
         var data = ''; 
         res.on('data', function (chunk) {
             data += chunk;
-           
         });
         res.on('end', function () {
             let jsonData = JSON.parse(data);
@@ -189,13 +178,52 @@ const { parse } = require('querystring');
                     //     }
                     
                     // });
-                    console.log('error')
                 }
                });
-                   
+               
             }
-            
-           
+            let date_ob = new Date();
+            let date = date_ob.getDate();
+            let hours = date_ob.getHours();
+            var T =[0,0,0,0];
+            console.log(date);
+            Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()},{ Hour: (hours-2).toString()},{ Hour: (hours-3).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}],function(err,tex){
+                for(var i = 0; i<tex.length;i++){
+                     T[i] = parseInt(tex[i].RainEachHour);
+                }
+                if(T[0]>=0&&T[1]>=0&&T[2]>=0&&T[3]>=0){
+                    var sum = T.reduce((partialSum, a) => partialSum + a, 0);
+                    
+                    // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
+                    // conf.OverrideUrl("https://fcm.googleapis.com/fcm/send");
+                        // var message = {
+                        //     to:'dkS3T74ISmGOi2IyXDoyWz:APA91bFKc2XTdNwaiDooNGaDlXVEvDeOhHFaV4SH6WLArYeTjRqJN3ntvQFtFaj3_K-HdCsvI0mCcpcHyYxUnL_6hqjwz9yMQKb51to_JE4r_FYnqR5yeucIVDMEtR-6BfR6OTpDHqAW',
+                        //         notification: {
+                        //             title: 'NodeJS-NotifcatioTestAPP',
+                        //             body: `Warning! Amount of rain is: ${sum}mm in last 4 hours`,
+                        //         },
+                        
+                        //         data: { //you can send only notification or only data(or include both)
+                        //             title: 'ok cdfsdsdfsd',
+                        //             body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
+                        //         }
+                        
+                        // };
+                        
+                        // fcm.send(message, function(err, response) {
+                        //     if (err) {
+                        //             console.log("Something has gone wrong!"+err);
+                        //             console.log("Respponse:! "+response);
+                        //     } else {
+                        //             // showToast("Successfully sent with response");
+                        //             console.log("Successfully sent with response: ", response);
+                        //     }
+                        
+                        // });
+                    
+                }
+                console.log(tex);
+            }); 
             // console.log(jsonData["data"]["pagination"]["total"]);
             // console.log(jsonData["data"]["entries"].length);
         });
@@ -205,8 +233,3 @@ const { parse } = require('querystring');
     });
     request.end();
     console.log('success')
-
-
-
-
-
