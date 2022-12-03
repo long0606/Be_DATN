@@ -86,7 +86,7 @@ app.get("/find", async function(req, res){
     var data = await Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()},{ Hour: (hours-2).toString()},{ Hour: (hours-3).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}]);
     res.json(data)
 });
-app.get("/all", async function(req, res){
+app.get("/allData", async function(req, res){
     var data = await Post.find().sort({id:-1});
     res.json(data)
 });
