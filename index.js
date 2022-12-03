@@ -182,48 +182,48 @@ const { parse } = require('querystring');
                });
                
             }
-            let date_ob = new Date();
-            let date = date_ob.getDate();
-            let hours = date_ob.getHours();
-            var T =[0,0,0,0];
-            console.log(date);
-            Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()},{ Hour: (hours-2).toString()},{ Hour: (hours-3).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}],function(err,tex){
-                for(var i = 0; i<tex.length;i++){
-                     T[i] = parseInt(tex[i].RainEachHour);
-                }
-                if(T[0]>=0&&T[1]>=0&&T[2]>=0&&T[3]>=0){
-                    var sum = T.reduce((partialSum, a) => partialSum + a, 0);
+            // let date_ob = new Date();
+            // let date = date_ob.getDate();
+            // let hours = date_ob.getHours();
+            // var T =[0,0,0,0];
+            // console.log(date);
+            // Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()},{ Hour: (hours-2).toString()},{ Hour: (hours-3).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}],function(err,tex){
+            //     for(var i = 0; i<tex.length;i++){
+            //          T[i] = parseInt(tex[i].RainEachHour);
+            //     }
+            //     if(T[0]>=0&&T[1]>=0&&T[2]>=0&&T[3]>=0){
+            //         var sum = T.reduce((partialSum, a) => partialSum + a, 0);
                     
-                    // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
-                    // conf.OverrideUrl("https://fcm.googleapis.com/fcm/send");
-                        var message = {
-                            to:'dkS3T74ISmGOi2IyXDoyWz:APA91bFKc2XTdNwaiDooNGaDlXVEvDeOhHFaV4SH6WLArYeTjRqJN3ntvQFtFaj3_K-HdCsvI0mCcpcHyYxUnL_6hqjwz9yMQKb51to_JE4r_FYnqR5yeucIVDMEtR-6BfR6OTpDHqAW',
-                                notification: {
-                                    title: 'NodeJS-NotifcatioTestAPP',
-                                    body: `Warning! Amount of rain is: ${sum}mm in last 4 hours`,
-                                },
+            //         // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
+            //         // conf.OverrideUrl("https://fcm.googleapis.com/fcm/send");
+            //             var message = {
+            //                 to:'dkS3T74ISmGOi2IyXDoyWz:APA91bFKc2XTdNwaiDooNGaDlXVEvDeOhHFaV4SH6WLArYeTjRqJN3ntvQFtFaj3_K-HdCsvI0mCcpcHyYxUnL_6hqjwz9yMQKb51to_JE4r_FYnqR5yeucIVDMEtR-6BfR6OTpDHqAW',
+            //                     notification: {
+            //                         title: 'NodeJS-NotifcatioTestAPP',
+            //                         body: `Warning! Amount of rain is: ${sum}mm in last 4 hours`,
+            //                     },
                         
-                                data: { //you can send only notification or only data(or include both)
-                                    title: 'ok cdfsdsdfsd',
-                                    body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
-                                }
+            //                     data: { //you can send only notification or only data(or include both)
+            //                         title: 'ok cdfsdsdfsd',
+            //                         body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
+            //                     }
                         
-                        };
+            //             };
                         
-                        fcm.send(message, function(err, response) {
-                            if (err) {
-                                    console.log("Something has gone wrong!"+err);
-                                    console.log("Respponse:! "+response);
-                            } else {
-                                    // showToast("Successfully sent with response");
-                                    console.log("Successfully sent with response: ", response);
-                            }
+            //             fcm.send(message, function(err, response) {
+            //                 if (err) {
+            //                         console.log("Something has gone wrong!"+err);
+            //                         console.log("Respponse:! "+response);
+            //                 } else {
+            //                         // showToast("Successfully sent with response");
+            //                         console.log("Successfully sent with response: ", response);
+            //                 }
                         
-                        });
+            //             });
                     
-                }
-                console.log(tex);
-            }); 
+            //     }
+            //     console.log(tex);
+            // }); 
             // console.log(jsonData["data"]["pagination"]["total"]);
             // console.log(jsonData["data"]["entries"].length);
         });
