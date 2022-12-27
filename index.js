@@ -207,7 +207,7 @@ const { parse } = require('querystring');
                 for(var i = 0; i<tex.length;i++){
                      T[i] = parseInt(tex[i].RainEachHour);
                 }
-                if(T[0]>=0&&T[1]>=0){
+                if(T[0]>=100&&T[1]>=100){
                     var sum = T.reduce((partialSum, a) => partialSum + a, 0);
                     
                     // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
@@ -237,7 +237,7 @@ const { parse } = require('querystring');
                         
                         });
                     
-                }else if(T[0]>=120&&T[1]>=120){
+                }else if(T[0]>=130&&T[1]>=130){
 
                         var sum = T.reduce((partialSum, a) => partialSum + a, 0);
                     
