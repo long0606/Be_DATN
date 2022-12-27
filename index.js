@@ -95,7 +95,7 @@ app.get("/allData2022", async function(req, res){
     res.json(data)
 });
 app.get("/allData2023", async function(req, res){
-    var data = await Post.find({Year: "2023"}).sort({id:-1});
+    var data = await Post.find({Year: "2022"}).sort({id:-1});
     res.json(data)
 });
 app.get("/Max", async function(req, res){
@@ -203,11 +203,11 @@ const { parse } = require('querystring');
             let hours = date_ob.getHours();
             var T =[0,0,0,0];
             console.log(date);
-            Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()},{ Hour: (hours-2).toString()},{ Hour: (hours-3).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}],function(err,tex){
+            Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}],function(err,tex){
                 for(var i = 0; i<tex.length;i++){
                      T[i] = parseInt(tex[i].RainEachHour);
                 }
-                if(T[0]>=0&&T[1]>=0&&T[2]>=0&&T[3]>=0){
+                if(T[0]>=0&&T[1]>=0){
                     var sum = T.reduce((partialSum, a) => partialSum + a, 0);
                     
                     // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
@@ -215,8 +215,8 @@ const { parse } = require('querystring');
                         var message = {
                             to:'dkS3T74ISmGOi2IyXDoyWz:APA91bFKc2XTdNwaiDooNGaDlXVEvDeOhHFaV4SH6WLArYeTjRqJN3ntvQFtFaj3_K-HdCsvI0mCcpcHyYxUnL_6hqjwz9yMQKb51to_JE4r_FYnqR5yeucIVDMEtR-6BfR6OTpDHqAW',
                                 notification: {
-                                    title: 'NodeJS-NotifcatioTestAPP',
-                                    body: `Warning! Amount of rain is: ${sum}mm in last 4 hours`,
+                                    title: 'Warning level 1, There is a risk of flooding in low-lying areas',
+                                    body: `Warning! Amount of rain is: ${sum}mm in last 2 hours`,
                                 },
                         
                                 data: { //you can send only notification or only data(or include both)
@@ -237,7 +237,67 @@ const { parse } = require('querystring');
                         
                         });
                     
-                }
+                }else if(T[0]>=120&&T[1]>=120){
+
+                        var sum = T.reduce((partialSum, a) => partialSum + a, 0);
+                    
+                    // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
+                    // conf.OverrideUrl("https://fcm.googleapis.com/fcm/send");
+                        var message = {
+                            to:'dkS3T74ISmGOi2IyXDoyWz:APA91bFKc2XTdNwaiDooNGaDlXVEvDeOhHFaV4SH6WLArYeTjRqJN3ntvQFtFaj3_K-HdCsvI0mCcpcHyYxUnL_6hqjwz9yMQKb51to_JE4r_FYnqR5yeucIVDMEtR-6BfR6OTpDHqAW',
+                                notification: {
+                                    title: 'Warning level 2, There is a risk of flooding in areas',
+                                    body: `Warning! Amount of rain is: ${sum}mm in last 2 hours`,
+                                },
+                        
+                                data: { //you can send only notification or only data(or include both)
+                                    title: 'ok cdfsdsdfsd',
+                                    body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
+                                }
+                        
+                        };
+                        
+                        fcm.send(message, function(err, response) {
+                            if (err) {
+                                    console.log("Something has gone wrong!"+err);
+                                    console.log("Respponse:! "+response);
+                            } else {
+                                    // showToast("Successfully sent with response");
+                                    console.log("Successfully sent with response: ", response);
+                            }
+                        
+                        });
+                    }else if(T[0]>=170&&T[1]>=170){
+
+                        var sum = T.reduce((partialSum, a) => partialSum + a, 0);
+                    
+                    // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
+                    // conf.OverrideUrl("https://fcm.googleapis.com/fcm/send");
+                        var message = {
+                            to:'dkS3T74ISmGOi2IyXDoyWz:APA91bFKc2XTdNwaiDooNGaDlXVEvDeOhHFaV4SH6WLArYeTjRqJN3ntvQFtFaj3_K-HdCsvI0mCcpcHyYxUnL_6hqjwz9yMQKb51to_JE4r_FYnqR5yeucIVDMEtR-6BfR6OTpDHqAW',
+                                notification: {
+                                    title: 'Warning level 3, People need to evacuate immediately',
+                                    body: `Warning! Amount of rain is: ${sum}mm in last 2 hours`,
+                                },
+                        
+                                data: { //you can send only notification or only data(or include both)
+                                    title: 'ok cdfsdsdfsd',
+                                    body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
+                                }
+                        
+                        };
+                        
+                        fcm.send(message, function(err, response) {
+                            if (err) {
+                                    console.log("Something has gone wrong!"+err);
+                                    console.log("Respponse:! "+response);
+                            } else {
+                                    // showToast("Successfully sent with response");
+                                    console.log("Successfully sent with response: ", response);
+                            }
+                        
+                        });
+                    }
                 console.log(tex);
             }); 
             // console.log(jsonData["data"]["pagination"]["total"]);
