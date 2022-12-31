@@ -95,7 +95,7 @@ app.get("/allData2022", async function(req, res){
     res.json(data)
 });
 app.get("/allData2023", async function(req, res){
-    var data = await Post.find({Year: "2022"}).sort({id:-1});
+    var data = await Post.find({Year: "2023"}).sort({id:-1});
     res.json(data)
 });
 app.get("/Max", async function(req, res){
