@@ -121,7 +121,7 @@ var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE4MjU4OTc5MTYsImlkIj
 const { parse } = require('querystring');
     var options = {
         host: 'quantrac.xathongminh.vn',
-        path: '/api/admin/water-monitorings?page=1&length=150',
+        path: '/api/admin/water-monitorings?page=1&length=20',
         // length max = 150, min auto = 4
         headers: {
             Authorization: 'Bearer '+token,
@@ -146,8 +146,8 @@ const { parse } = require('querystring');
                     var intHour = parseInt(splitObjectJSON[1]?.split(':')[1]);
                     var intDay = parseInt(splitCreated_at[0].split('-')[2]);
                     var year = splitCreated_at[0].split('-')[0];
-                    var month = intYear==2022&&intMonth==11&&intHour==0||intHour==1||intHour==2||intHour==3||intHour==4||intHour==5||intHour==6?intDay==30?(intMonth+1).toString():intMonth.toString():intMonth.toString();
-                    var day = intYear==2022&&intMonth==11&&intHour==0||intHour==1||intHour==2||intHour==3||intHour==4||intHour==5||intHour==6?intDay<30?(intDay +1).toString():1:intDay.toString();
+                    var month = intYear==2022&&intMonth==11&&(intHour==0||intHour==1||intHour==2||intHour==3||intHour==4||intHour==5||intHour==6)?intDay==30?(intMonth+1).toString():intMonth.toString():intMonth.toString();
+                    var day = intYear==2022&&intMonth==11&&(intHour==0||intHour==1||intHour==2||intHour==3||intHour==4||intHour==5||intHour==6)?intDay<30?(intDay +1).toString():1:intDay.toString();
                     var hour = splitObjectJSON[1]?.split(':')[1];
                     var min = splitObjectJSON[2]?.split(':')[1];
                     var rainDay =splitObjectJSON[3]?.split(':')[1];
@@ -208,7 +208,7 @@ const { parse } = require('querystring');
                     for(var i = 0; i<tex.length;i++){
                          T[i] = parseInt(tex[i].RainEachHour);
                     }
-                    if(T[0]>=100&&T[1]>=100){
+                    if(T[0]>=0&&T[1]>=0){
                         var sum = T.reduce((partialSum, a) => partialSum + a, 0);
                         
                         // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
