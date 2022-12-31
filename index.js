@@ -210,7 +210,6 @@ const { parse } = require('querystring');
                     }
                     if(T[0]>=100&&T[1]>=100){
                         var sum = T.reduce((partialSum, a) => partialSum + a, 0);
-                        
                         // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
                         // conf.OverrideUrl("https://fcm.googleapis.com/fcm/send");
                             var message = {
@@ -226,7 +225,6 @@ const { parse } = require('querystring');
                                     }
                             
                             };
-                            
                             fcm.send(message, function(err, response) {
                                 if (err) {
                                         console.log("Something has gone wrong!"+err);
