@@ -98,18 +98,18 @@ app.get("/allData2023", async function(req, res){
     var data = await Post.find({Year: "2023"}).sort({id:-1});
     res.json(data)
 });
-app.get("/Max", async function(req, res){
-        var data = await Post.aggregate([{ $group : {_id:{"hour": "$Hour", "day": "$Day" ,"month": "$Month"}, RainEachHour: { $max : "$RainHour" },}},{"$sort": {"_id.month":-1,"_id.day":-1,"_id.hour":-1}}]);
-        res.json(data)
-    });
-// app.get("/Max2022", async function(req, res){
-//     var data = await Post.aggregate([{$match : {Year:"2022"}},{ $group : {_id:{"hour": "$Hour", "day": "$Day" ,"month": "$Month"}, RainEachHour: { $max : "$RainHour" },}},{"$sort": {"_id.month":-1,"_id.day":-1,"_id.hour":-1}}]);
-//     res.json(data)
-// });
-// app.get("/Max2023", async function(req, res){
-//     var data = await Post.aggregate([{$match : {Year:"2023"}},{ $group : {_id:{"hour": "$Hour", "day": "$Day" ,"month": "$Month"}, RainEachHour: { $max : "$RainHour" },}},{"$sort": {"_id.month":-1,"_id.day":-1,"_id.hour":-1}}]);
-//     res.json(data)
-// });
+// app.get("/Max", async function(req, res){
+//         var data = await Post.aggregate([{ $group : {_id:{"hour": "$Hour", "day": "$Day" ,"month": "$Month"}, RainEachHour: { $max : "$RainHour" },}},{"$sort": {"_id.month":-1,"_id.day":-1,"_id.hour":-1}}]);
+//         res.json(data)
+//     });
+app.get("/Max2022", async function(req, res){
+    var data = await Post.aggregate([{$match : {Year:"2022"}},{ $group : {_id:{"hour": "$Hour", "day": "$Day" ,"month": "$Month"}, RainEachHour: { $max : "$RainHour" },}},{"$sort": {"_id.month":-1,"_id.day":-1,"_id.hour":-1}}]);
+    res.json(data)
+});
+app.get("/Max2023", async function(req, res){
+    var data = await Post.aggregate([{$match : {Year:"2023"}},{ $group : {_id:{"hour": "$Hour", "day": "$Day" ,"month": "$Month"}, RainEachHour: { $max : "$RainHour" },}},{"$sort": {"_id.month":-1,"_id.day":-1,"_id.hour":-1}}]);
+    res.json(data)
+});
 
 app.listen(3000);
 
@@ -146,8 +146,8 @@ const { parse } = require('querystring');
                     var intHour = parseInt(splitObjectJSON[1]?.split(':')[1]);
                     var intDay = parseInt(splitCreated_at[0].split('-')[2]);
                     var year = splitCreated_at[0].split('-')[0];
-                    var month = intYear==2022&&intMonth==11&&(intHour==0||intHour==1||intHour==2||intHour==3||intHour==4||intHour==5||intHour==6)?intDay==30?(intMonth+1).toString():intMonth.toString():intMonth.toString();
-                    var day = intYear==2022&&intMonth==11&&(intHour==0||intHour==1||intHour==2||intHour==3||intHour==4||intHour==5||intHour==6)?intDay<30?(intDay +1).toString():1:intDay.toString();
+                    var month = (intYear==2022||intYear==2023)&&(intMonth==12||intMonth==1)&&(intHour==0||intHour==1||intHour==2||intHour==3||intHour==4||intHour==5||intHour==6)?intDay==31?(1).toString():intMonth.toString():intMonth.toString();
+                    var day = (intYear==2022||intYear==2023)&&(intMonth==12||intMonth==1)&&(intHour==0||intHour==1||intHour==2||intHour==3||intHour==4||intHour==5||intHour==6)?intDay<31?(intDay +1).toString():1:intDay.toString();
                     var hour = splitObjectJSON[1]?.split(':')[1];
                     var min = splitObjectJSON[2]?.split(':')[1];
                     var rainDay =splitObjectJSON[3]?.split(':')[1];
