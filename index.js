@@ -98,10 +98,10 @@ app.get("/allData2023", async function(req, res){
     var data = await Post.find({Year: "2023"}).sort({id:-1});
     res.json(data)
 });
-// app.get("/Max", async function(req, res){
-//         var data = await Post.aggregate([{ $group : {_id:{"hour": "$Hour", "day": "$Day" ,"month": "$Month"}, RainEachHour: { $max : "$RainHour" },}},{"$sort": {"_id.month":-1,"_id.day":-1,"_id.hour":-1}}]);
-//         res.json(data)
-//     });
+app.get("/Max", async function(req, res){
+        var data = await Post.aggregate([{ $group : {_id:{"hour": "$Hour", "day": "$Day" ,"month": "$Month"}, RainEachHour: { $max : "$RainHour" },}},{"$sort": {"_id.month":-1,"_id.day":-1,"_id.hour":-1}}]);
+        res.json(data)
+    });
 app.get("/Max2022", async function(req, res){
     var data = await Post.aggregate([{$match : {Year:"2022"}},{ $group : {_id:{"hour": "$Hour", "day": "$Day" ,"month": "$Month"}, RainEachHour: { $max : "$RainHour" },}},{"$sort": {"_id.month":-1,"_id.day":-1,"_id.hour":-1}}]);
     res.json(data)
