@@ -6,11 +6,10 @@ const FCM = require('fcm-node');
 const express = require('express');    
 const cors = require('cors')
 const app = express();
-
+const fs = require('fs');
 // setup for firebase cloud messagge
 var serverKey = 'AAAAl7gMyoE:APA91bHzzmOAPh3ljX8BoDShqwP704ngrjxPZIESRHCcO5ugWn5idvwjjpPSS4xTLVNY0Vha5yw7mfq37Pp7ucJPd5ebZc99AopX8WfD5t7n3JMttXQVb-ixsDahkqG7S41OWhzv3jX6';
 var fcm = new FCM(serverKey,);
-
 
 
 mongoose.connect("mongodb+srv://DATN:long1234@cluster0.oi7m08w.mongodb.net/DATN", (err)=>{
@@ -81,6 +80,7 @@ const Post = mongoose.model('Post', Postman);
 //         ).sort({Hour:1, Min:1});
 //     res.json(data)
 // });
+const fileName = 'D:\\NodeJs\\BE-DATN\\Data2022.json';
 app.use(cors());
 app.get("/find", async function(req, res){
     var data = await Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()},{ Hour: (hours-2).toString()},{ Hour: (hours-3).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}]);
@@ -91,8 +91,15 @@ app.get("/allData", async function(req, res){
     res.json(data)
 });
 app.get("/allData2022", async function(req, res){
-    var data = await Post.find({Year: "2022"}).sort({id:-1});
-    res.json(data)
+    // var data = await Post.find({Year: "2022"}).sort({id:-1});
+    fs.readFile(fileName, (err, data) => {
+        if (err) throw err;
+        //parse nghĩa là parse dữ liệu text của chúng ta từ dạng string quay về dạng object
+        let data2022 = JSON.parse(data);
+        console.log(data2022);
+        res.json(data2022)
+    })
+    
 });
 app.get("/allData2023", async function(req, res){
     var data = await Post.find({Year: "2023"}).sort({id:-1});
