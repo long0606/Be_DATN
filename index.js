@@ -80,7 +80,7 @@ const Post = mongoose.model('Post', Postman);
 //         ).sort({Hour:1, Min:1});
 //     res.json(data)
 // });
-const fileName = 'D:\\NodeJs\\BE-DATN\\Data2022.json';
+const fileName = './Data2022.json';
 app.use(cors());
 app.get("/find", async function(req, res){
     var data = await Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()},{ Hour: (hours-2).toString()},{ Hour: (hours-3).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}]);
