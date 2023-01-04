@@ -90,19 +90,16 @@ app.get("/allData", async function(req, res){
     var data = await Post.find().sort({id:-1});
     res.json(data)
 });
-
+app.get("/allData2022", async function(req, res){
     // var data = await Post.find({Year: "2022"}).sort({id:-1});
-    fs.readFile(fileName, (err, data) => {
+     fs.readFile(fileName, (err, data) => {
         if (err) throw err;
         //parse nghĩa là parse dữ liệu text của chúng ta từ dạng string quay về dạng object
         let data2022 = JSON.parse(data);
         console.log(data2022);
-        app.get("/allData2022", async function(req, res){
-            res.json(data2022);
-        })
+        res.json(data2022);
     })
-    
-    
+});
 app.get("/allData2023", async function(req, res){
     var data = await Post.find({Year: "2023"}).sort({id:-1});
     res.json(data)
@@ -120,7 +117,7 @@ app.get("/Max2023", async function(req, res){
     res.json(data)
 });
 
-app.listen(3000);
+app.listen(8080);
 
 // schedule.scheduleJob(' */1 * * * *',function(){
 // })
