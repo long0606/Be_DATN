@@ -70,6 +70,7 @@ const Postman = new mongoose.Schema({
 })
 // mongo se tu chuyen ten Post thanh so nhieu va lowercase "posts"
 const Post = mongoose.model('Post', Postman);
+const Posts = mongoose.model('2022Post', Postman);
 
 // var data = Post.find({Day: "27", Hour: { $in: [ "15", "16","17"]} },function(err,result){
 //     console.log(result[1]["RainDay"]);
@@ -80,8 +81,9 @@ const Post = mongoose.model('Post', Postman);
 //         ).sort({Hour:1, Min:1});
 //     res.json(data)
 // });
-const fileName = './Data2022.json';
-app.use(cors());
+const fileName = './public/Data2022.json';
+app.use(cors())
+app.use(express.static('public'))
 app.get("/find", async function(req, res){
     var data = await Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()},{ Hour: (hours-2).toString()},{ Hour: (hours-3).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}]);
     res.json(data)
@@ -99,6 +101,7 @@ app.get("/allData2022", async function(req, res){
         console.log(data2022);
         res.json(data2022);
     })
+   
 });
 app.get("/allData2023", async function(req, res){
     var data = await Post.find({Year: "2023"}).sort({id:-1});
@@ -117,7 +120,7 @@ app.get("/Max2023", async function(req, res){
     res.json(data)
 });
 
-app.listen(3000);
+app.listen(8080);
 
 // schedule.scheduleJob(' */1 * * * *',function(){
 // })
