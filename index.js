@@ -17,6 +17,20 @@ mongoose.connect("mongodb+srv://DATN:long1234@cluster0.oi7m08w.mongodb.net/DATN"
     else console.log('error');
 })
 
+// import { readFileSync } from 'fs';
+// import path from 'path';
+
+function getStaticProps() {
+  const file = path.join(process.cwd(), 'public', 'Data2022.json');
+  const data = readFileSync(file, 'utf8');
+
+  return {
+    props: {
+      data,
+    },
+  };
+}
+
 const Postman = new mongoose.Schema({
     id:{
         type:String,
@@ -83,21 +97,21 @@ const Posts = mongoose.model('2022Post', Postman);
 // });
 const fileName = '/public';
 app.use(cors())
-app.use(express.static('public'))
-app.get('/allData2022', function(req, res){
-    var options = {
-        root: path.join(__dirname)
-    };
+// app.use(express.static('public'))
+// app.get('/allData2022', function(req, res){
+//     var options = {
+//         root: path.join(__dirname,'public')
+//     };
      
-    var fileName = '/public/Data2022.json';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            throw err;
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });
-});
+//     var fileName = '/Data2022.json';
+//     res.sendFile(fileName, options, function (err) {
+//         if (err) {
+//             throw err;
+//         } else {
+//             console.log('Sent:', fileName);
+//         }
+//     });
+// });
  
 app.get("/find", async function(req, res){
     var data = await Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()},{ Hour: (hours-2).toString()},{ Hour: (hours-3).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}]);
@@ -107,17 +121,21 @@ app.get("/allData", async function(req, res){
     var data = await Post.find().sort({id:-1});
     res.json(data)
 });
-// app.get("/allData2022", async function(req, res){
-//     // var data = await Post.find({Year: "2022"}).sort({id:-1});
-//      fs.readFile(fileName, (err, data) => {
-//         if (err) throw err;
-//         //parse nghĩa là parse dữ liệu text của chúng ta từ dạng string quay về dạng object
-//         let data2022 = JSON.parse(data);
-//         console.log(data2022);
-//         // res.json(data2022);
-//     })
-//    res.sendFile(fileName);
-// });
+
+app.get("/allData2022", async function(req, res){
+    const file = path.join(process.cwd(), 'public', 'Data2022.json');
+  const data = fs.readFileSync(file, 'utf8');
+  let data2022 = JSON.parse(data);
+    // var data = await Post.find({Year: "2022"}).sort({id:-1});
+    //  fs.readFile(fileName, (err, data) => {
+    //     if (err) throw err;
+    //     //parse nghĩa là parse dữ liệu text của chúng ta từ dạng string quay về dạng object
+    //     let data2022 = JSON.parse(data);
+    //     console.log(data2022);
+    //     // res.json(data2022);
+    // })
+   res.json(data2022);
+});
 app.get("/allData2023", async function(req, res){
     var data = await Post.find({Year: "2023"}).sort({id:-1});
     res.json(data)
@@ -135,7 +153,7 @@ app.get("/Max2023", async function(req, res){
     res.json(data)
 });
 
-app.listen(8080);
+app.listen(3000);
 
 // schedule.scheduleJob(' */1 * * * *',function(){
 // })
