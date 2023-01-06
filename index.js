@@ -243,14 +243,14 @@ const { parse } = require('querystring');
             let date_ob = new Date();
             let date = date_ob.getDate();
             let hours = date_ob.getHours();
-            var T =[0,0,0,0];
+            var T =[0,0];
             console.log(date);
             schedule.scheduleJob(' */1 * * * *',function(){
                 Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}],function(err,tex){
                     for(var i = 0; i<tex.length;i++){
                          T[i] = parseInt(tex[i].RainEachHour);
                     }
-                    if(T[0]>=100&&T[1]>=100){
+                    if((T[0]+T[1])>=120){
                         var sum = T.reduce((partialSum, a) => partialSum + a, 0);
                         // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
                         // conf.OverrideUrl("https://fcm.googleapis.com/fcm/send");
@@ -278,7 +278,7 @@ const { parse } = require('querystring');
                             
                             });
                         
-                    }else if(T[0]>=130&&T[1]>=130){
+                    }else if((T[0]+T[1])>=170){
     
                             var sum = T.reduce((partialSum, a) => partialSum + a, 0);
                         
@@ -308,7 +308,7 @@ const { parse } = require('querystring');
                                 }
                             
                             });
-                        }else if(T[0]>=170&&T[1]>=170){
+                        }else if((T[0]+T[1])>=200){
     
                             var sum = T.reduce((partialSum, a) => partialSum + a, 0);
                         
