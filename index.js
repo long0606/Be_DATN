@@ -250,7 +250,7 @@ const { parse } = require('querystring');
                     for(var i = 0; i<tex.length;i++){
                          T[i] = parseInt(tex[i].RainEachHour);
                     }
-                    if((T[0]+T[1])>=120){
+                    if(120<(T[0]+T[1])<170){
                         var sum = T.reduce((partialSum, a) => partialSum + a, 0);
                         // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
                         // conf.OverrideUrl("https://fcm.googleapis.com/fcm/send");
@@ -258,7 +258,7 @@ const { parse } = require('querystring');
                                 to:'dkS3T74ISmGOi2IyXDoyWz:APA91bFKc2XTdNwaiDooNGaDlXVEvDeOhHFaV4SH6WLArYeTjRqJN3ntvQFtFaj3_K-HdCsvI0mCcpcHyYxUnL_6hqjwz9yMQKb51to_JE4r_FYnqR5yeucIVDMEtR-6BfR6OTpDHqAW',
                                     notification: {
                                         title: 'Warning level 1, There is a risk of flooding in low-lying areas',
-                                        body: `Warning! Amount of rain is: ${sum}mm in last 2 hours`,
+                                        body: `Warning! Amount of rain is: ${T[0]+T[1]}mm in last 2 hours`,
                                     },
                             
                                     data: { //you can send only notification or only data(or include both)
@@ -278,7 +278,7 @@ const { parse } = require('querystring');
                             
                             });
                         
-                    }else if((T[0]+T[1])>=170){
+                    }else if(200>(T[0]+T[1])>=170){
     
                             var sum = T.reduce((partialSum, a) => partialSum + a, 0);
                         
