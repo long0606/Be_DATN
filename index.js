@@ -228,7 +228,7 @@ const { parse } = require('querystring');
                     }
                     var sum = T.reduce((partialSum, a) => partialSum + a, 0);
                     console.log(sum)
-                    if(120<=sum){
+                    if(120<=sum<170){
                             var message = {
                                 to:'dkS3T74ISmGOi2IyXDoyWz:APA91bFKc2XTdNwaiDooNGaDlXVEvDeOhHFaV4SH6WLArYeTjRqJN3ntvQFtFaj3_K-HdCsvI0mCcpcHyYxUnL_6hqjwz9yMQKb51to_JE4r_FYnqR5yeucIVDMEtR-6BfR6OTpDHqAW',
                                     notification: {
