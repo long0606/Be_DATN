@@ -215,7 +215,7 @@ const { parse } = require('querystring');
                
             }
             
-            schedule.scheduleJob(' */1 * * * *',function(){
+            // schedule.scheduleJob(' */5 * * * *',function(){}
                 let date_ob = new Date();
             let date = date_ob.getDate();
             let hours = date_ob.getHours();
@@ -228,7 +228,7 @@ const { parse } = require('querystring');
                     }
                     var sum = T.reduce((partialSum, a) => partialSum + a, 0);
                     console.log(sum)
-                    if(120<=sum<170){
+                    if(120<sum&&sum<170){
                             var message = {
                                 to:'dkS3T74ISmGOi2IyXDoyWz:APA91bFKc2XTdNwaiDooNGaDlXVEvDeOhHFaV4SH6WLArYeTjRqJN3ntvQFtFaj3_K-HdCsvI0mCcpcHyYxUnL_6hqjwz9yMQKb51to_JE4r_FYnqR5yeucIVDMEtR-6BfR6OTpDHqAW',
                                     notification: {
@@ -254,7 +254,7 @@ const { parse } = require('querystring');
                             });
                     
                         
-                    }else if(200>sum>=170){
+                    }else if(200>sum&&sum>=170){
     
                         // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
                         // conf.OverrideUrl("https://fcm.googleapis.com/fcm/send");
@@ -313,7 +313,7 @@ const { parse } = require('querystring');
                         }else return null;
                     console.log(tex);
                 }); 
-                })
+                
             
             // console.log(jsonData["data"]["pagination"]["total"]);
             // console.log(jsonData["data"]["entries"].length);
