@@ -211,60 +211,35 @@ const { parse } = require('querystring');
                     })
                     post.save();      
                 }
-                else {
-                    // var message = {
-                    //     to:'dkS3T74ISmGOi2IyXDoyWz:APA91bFKc2XTdNwaiDooNGaDlXVEvDeOhHFaV4SH6WLArYeTjRqJN3ntvQFtFaj3_K-HdCsvI0mCcpcHyYxUnL_6hqjwz9yMQKb51to_JE4r_FYnqR5yeucIVDMEtR-6BfR6OTpDHqAW',
-                    //         notification: {
-                    //             title: 'NodeJS-NotifcatioTestAPP',
-                    //             body: `Duplicated ID: ${jsonData["data"]["entries"][i]["id"]}`,
-                    //         },
-                    
-                    //         data: { //you can send only notification or only data(or include both)
-                    //             title: 'ok cdfsdsdfsd',
-                    //             body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
-                    //         }
-                    
-                    // };
-                    
-                    // fcm.send(message, function(err, response) {
-                    //     if (err) {
-                    //             console.log("Something has gone wrong!"+err);
-                    //             console.log("Respponse:! "+response);
-                    //     } else {
-                    //             // showToast("Successfully sent with response");
-                    //             console.log("Successfully sent with response: ", response);
-                    //     }
-                    
-                    // });
-                }
                });
                
             }
-            let date_ob = new Date();
+            
+            schedule.scheduleJob(' */1 * * * *',function(){
+                let date_ob = new Date();
             let date = date_ob.getDate();
             let hours = date_ob.getHours();
             var T =[0,0];
             console.log(date);
-            schedule.scheduleJob(' */1 * * * *',function(){
+            console.log(hours);
                 Post.aggregate([{$match : {Day:date.toString(),$or: [ { Hour: (hours).toString() }, { Hour: (hours-1).toString()}] } },{ $group : {_id:"$Hour", RainEachHour: { $max : "$RainHour" },}},{"$sort": {"Hour":1}}],function(err,tex){
                     for(var i = 0; i<tex.length;i++){
                          T[i] = parseInt(tex[i].RainEachHour);
                     }
-                    if(120<(T[0]+T[1])<170){
-                        var sum = T.reduce((partialSum, a) => partialSum + a, 0);
-                        // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
-                        // conf.OverrideUrl("https://fcm.googleapis.com/fcm/send");
+                    var sum = T.reduce((partialSum, a) => partialSum + a, 0);
+                    console.log(sum)
+                    if(120<=sum){
                             var message = {
                                 to:'dkS3T74ISmGOi2IyXDoyWz:APA91bFKc2XTdNwaiDooNGaDlXVEvDeOhHFaV4SH6WLArYeTjRqJN3ntvQFtFaj3_K-HdCsvI0mCcpcHyYxUnL_6hqjwz9yMQKb51to_JE4r_FYnqR5yeucIVDMEtR-6BfR6OTpDHqAW',
                                     notification: {
                                         title: 'Warning level 1, There is a risk of flooding in low-lying areas',
-                                        body: `Warning! Amount of rain is: ${T[0]+T[1]}mm in last 2 hours`,
+                                        body: `Warning! Amount of rain is: ${sum}mm in last 2 hours`,
                                     },
                             
-                                    data: { //you can send only notification or only data(or include both)
-                                        title: 'ok cdfsdsdfsd',
-                                        body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
-                                    }
+                                    // data: { //you can send only notification or only data(or include both)
+                                    //     title: 'ok cdfsdsdfsd',
+                                    //     body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
+                                    // }
                             
                             };
                             fcm.send(message, function(err, response) {
@@ -277,11 +252,10 @@ const { parse } = require('querystring');
                                 }
                             
                             });
+                    
                         
-                    }else if(200>(T[0]+T[1])>=170){
+                    }else if(200>sum>=170){
     
-                            var sum = T.reduce((partialSum, a) => partialSum + a, 0);
-                        
                         // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
                         // conf.OverrideUrl("https://fcm.googleapis.com/fcm/send");
                             var message = {
@@ -291,10 +265,10 @@ const { parse } = require('querystring');
                                         body: `Warning! Amount of rain is: ${sum}mm in last 2 hours`,
                                     },
                             
-                                    data: { //you can send only notification or only data(or include both)
-                                        title: 'ok cdfsdsdfsd',
-                                        body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
-                                    }
+                                    // data: { //you can send only notification or only data(or include both)
+                                    //     title: 'ok cdfsdsdfsd',
+                                    //     body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
+                                    // }
                             
                             };
                             
@@ -308,10 +282,8 @@ const { parse } = require('querystring');
                                 }
                             
                             });
-                        }else if((T[0]+T[1])>=200){
+                        }else if(sum>=200){
     
-                            var sum = T.reduce((partialSum, a) => partialSum + a, 0);
-                        
                         // var conf = new GcmConfiguration("optionalSenderID", "senderAuthToken", null);
                         // conf.OverrideUrl("https://fcm.googleapis.com/fcm/send");
                             var message = {
@@ -321,10 +293,10 @@ const { parse } = require('querystring');
                                         body: `Warning! Amount of rain is: ${sum}mm in last 2 hours`,
                                     },
                             
-                                    data: { //you can send only notification or only data(or include both)
-                                        title: 'ok cdfsdsdfsd',
-                                        body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
-                                    }
+                                    // data: { //you can send only notification or only data(or include both)
+                                    //     title: 'ok cdfsdsdfsd',
+                                    //     body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
+                                    // }
                             
                             };
                             
@@ -338,7 +310,7 @@ const { parse } = require('querystring');
                                 }
                             
                             });
-                        }
+                        }else return null;
                     console.log(tex);
                 }); 
                 })
